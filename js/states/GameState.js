@@ -158,8 +158,8 @@ GameState.prototype = {
         this.facetan_text.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 
         //var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Jump");
-        this.buttonJump.width = "60px";
-        this.buttonJump.height = "40px";
+        this.buttonJump.width = "80px";
+        this.buttonJump.height = "60px";
         this.buttonJump.color = "white";
         this.buttonJump.cornerRadius = 10;
         this.buttonJump.background = "black";
@@ -303,23 +303,28 @@ GameState.prototype = {
     },
 
     createWaterObj : function(position){
-        var waterMesh = BABYLON.Mesh.CreateGround("waterMesh"+this.water_wi, 1000, 1000, 16, this.scene, false);
-        this.water_wi++;
-        var water = new BABYLON.WaterMaterial("water", this.scene, new BABYLON.Vector2(512, 512));
-        water.backFaceCulling = true;
-        water.bumpTexture = new BABYLON.Texture("img/waterbump.png", this.scene);
-        water.windForce = -10;
-        water.waveHeight = 1.0;
-        water.bumpHeight = 0.5;
-        water.windDirection = new BABYLON.Vector2(1, 1);
-        water.waterColor = new BABYLON.Color3(0, 0, 200);
-        water.colorBlendFactor = 0.0;
-        water.addToRenderList(this.skybox);
-        waterMesh.material = water;
-        waterMesh.position = position;
-        //this.waterMesh = waterMesh;
-        //this.waterdisPosition = new BABYLON.Vector3(0, -20, 0);
-        this.waterArray.push(waterMesh);
+        // var waterMesh = BABYLON.Mesh.CreateGround("waterMesh"+this.water_wi, 1000, 1000, 16, this.scene, false);
+        // this.water_wi++;
+        // var water = new BABYLON.WaterMaterial("water", this.scene, new BABYLON.Vector2(512, 512));
+        // water.backFaceCulling = true;
+        // water.bumpTexture = new BABYLON.Texture("img/waterbump.png", this.scene);
+        // water.windForce = -10;
+        // water.waveHeight = 1.0;
+        // water.bumpHeight = 0.5;
+        // water.windDirection = new BABYLON.Vector2(1, 1);
+        // water.waterColor = new BABYLON.Color3(0, 0, 200);
+        // water.colorBlendFactor = 0.0;
+        // water.addToRenderList(this.skybox);
+        // waterMesh.material = water;
+
+        var waterclone = this.waterMesh.clone();
+        waterclone.position = position.clone();
+        waterclone.material.addToRenderList(this.skybox);
+        this.waterArray.push(waterclone);
+
+        //waterMesh.position = position;
+        //this.waterArray.push(waterMesh);
+
         console.log("create water"); 
         var len = this.waterArray.length;
         // for(var i=0; i<len; i++){
@@ -599,7 +604,7 @@ GameState.prototype = {
             }
             if(player.mesh.position.z > _this.waterdisPosition.z){
                 _this.waterdisPosition.z += 1000;
-                _this.createWaterObj(_this.waterdisPosition);
+               // _this.createWaterObj(_this.waterdisPosition);
             }
 
 
