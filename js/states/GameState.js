@@ -591,11 +591,11 @@ GameState.prototype = {
         //_this.camera.position = new BABYLON.Vector3(0, 20, -40);
         //console.log(_this.boxArray);
         
-        if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-            player.moveForward = 1;
-        } else {
-            ;
-        }
+        // if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        //     player.moveForward = 1;
+        // } else {
+        //     ;
+        // }
 
 
         var flashCount = 0;
