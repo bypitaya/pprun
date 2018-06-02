@@ -6,6 +6,7 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
     this.shadowGenerator = shadowGenerator;
     this.mesh;
     this.body;
+    this.heavy = 2;
 
 
     /* MESH */
@@ -316,7 +317,18 @@ Player.prototype = {
                 this.canjump--;
             }
             break;
+        case 69:
+            if(this.heavy == 2){
+                this.mesh.physicsImpostor.setMass(500);
+                this.heavy = 500;
+            }else {
+                this.mesh.physicsImpostor.setMass(2);
+                this.heavy = 2;
+            }
+            break;
+
         }
+        
     },
 
     keyUp : function(keycode) {
