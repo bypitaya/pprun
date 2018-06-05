@@ -1,8 +1,3 @@
-/**
- * The state used for player to select their colors
- * @param game
- * @constructor
- */
 var GameState = function(game) {
     State.call(this, game);
 
@@ -48,7 +43,7 @@ GameState.prototype.constructor = GameState;
 
 GameState.prototype = {
 
-
+    //场景初始化
     _initScene : function(){
 
         var _this = this;
@@ -85,6 +80,7 @@ GameState.prototype = {
 
         var music = new BABYLON.Sound("Music", "music/house.mp3", scene, null, { loop: true, autoplay: true });
 
+        //终点线dinish_line
         var f_lineMesh = new BABYLON.Mesh.CreateBox("finishLine", 100, scene);
         f_lineMesh.position.z = 5000+10;
         f_lineMesh.scaling = new BABYLON.Vector3(1, 0.001, 0.2);
@@ -97,6 +93,7 @@ GameState.prototype = {
         // var light2shadow = new BABYLON.DirectionalLight("dLight2Shadow", new BABYLON.Vector3(-1, -2, 1), scene);
         // light2.position = new BABYLON.Vector3(20, 40, 20);
 
+        //阴影代理
         var shadowGenerator = new BABYLON.ShadowGenerator(1024, light2);
         _this.shadowGenerator = shadowGenerator;
         //console.log("shadow");
@@ -117,6 +114,7 @@ GameState.prototype = {
         skybox.infiniteDistance = true;
         this.skybox = skybox;
 
+        //water
         var waterMesh = BABYLON.Mesh.CreateGround("waterMesh", 1000, 1000, 16, scene, false);
         var water = new BABYLON.WaterMaterial("water", scene, new BABYLON.Vector2(512, 512));
         water.backFaceCulling = true;
@@ -137,12 +135,15 @@ GameState.prototype = {
         //var waterblueMesh = BABYLON.Mesh.createBox("waterblue", scene);
         //var waterblue = BABYLON.Material("");
 
+        //景深/雾化
+        //fog
         //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
         //scene.fogColor = new BABYLON.Color3(0.8, 0.8, 0.8);
         //scene.fogDensity = 0.0005;
 
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
+        //gui分数显示文本域
         //this.facetan_text = new BABYLON.GUI.TextBlock();
         this.facetan_text.text = "score:0";
         this.facetan_text.color = "black";
@@ -171,8 +172,7 @@ GameState.prototype = {
         this.buttonJump.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
 
-
-        
+        //模型导入
         console.log("start load ground");
         BABYLON.SceneLoader.ImportMesh("", "model/", loadFileName[0], scene, function(groundMeshes){
             console.log("loaded ground");
@@ -241,6 +241,7 @@ GameState.prototype = {
         return scene;
     },
 
+    //完部模型加载完毕后
     importModelSuccess : function(){
         var _this = this;
         console.log("count " + loadCount);
@@ -302,6 +303,7 @@ GameState.prototype = {
         return true;
     },
 
+    //水面延展
     createWaterObj : function(position){
         // var waterMesh = BABYLON.Mesh.CreateGround("waterMesh"+this.water_wi, 1000, 1000, 16, this.scene, false);
         // this.water_wi++;
@@ -332,6 +334,7 @@ GameState.prototype = {
         // }
     },
 
+    //区域延展
     createArea : function(corePosition){
 
         this.createGroundObj(corePosition);
@@ -357,6 +360,7 @@ GameState.prototype = {
         return true;
     },
 
+    //检查障碍物数组 超边界移除
     checkAllArray : function(position){
         this.removeOverflowObj(position, this.groundArray);
         this.removeOverflowObj(position, this.boxArray);
@@ -364,6 +368,7 @@ GameState.prototype = {
         //this.removeOverflowWater(position, this.waterArray);
     },
 
+    //移除超边界水
     removeOverflowWater : function(position,array){
         //console.log("rewater");
         var len = array.length;
@@ -379,6 +384,7 @@ GameState.prototype = {
         }
     },
 
+    //移除数组中超边界物体
     removeOverflowObj : function(position,array){
         var len = array.length;
         //y
@@ -414,6 +420,9 @@ GameState.prototype = {
         return true;
     },
 
+    //移除物体(mesh)
+    //关闭物理
+    //removeMesh无法移除克隆生成物体，获取返回位置后调用销毁方法
     removeObj : function(mesh){
         //console.log("remove");
         //console.log(mesh);
@@ -427,6 +436,7 @@ GameState.prototype = {
         mesh.dispose();
     },
 
+    //对应位置创建箱子
     createBoxObj : function(position){
         //console.log(this.boxMesh);
         //console.log(this.boxArray);
@@ -514,8 +524,6 @@ GameState.prototype = {
 
         this.scene = this._initScene();
 
-
-
         // The loader
         var loader =  new BABYLON.AssetsManager(this.scene);
 
@@ -525,17 +533,12 @@ GameState.prototype = {
         var _this = this;
 
         /*var modelLoader = new BABYLON.AssetsManager(_this._loaderEXModel());
-
         modelLoader.onFinish = function(tasks){
             // Init the game
             _this._initGame();
-
             console.log(_this.libModel);
-
-
             // The state is ready to be played
             _this.isReady = true;
-
             _this.engine.runRenderLoop(function () {
                 _this.scene.render();
             });
@@ -555,7 +558,6 @@ GameState.prototype = {
 
             _this._initGame();
 
-            
             // The state is ready to be played
             _this.isReady = true;
             console.log("_this.isRunning "+_this.isRunning);
@@ -598,10 +600,14 @@ GameState.prototype = {
         // }
 
 
+        //帧运算
         var flashCount = 0;
         this.scene.registerBeforeRender(function(){
             //console.log(_this.boxArray);
             //console.log(_this.camera.position);
+
+            
+            //新物质生成
             if(player.mesh.position.z+300 > _this.distancePosition.z){
                 console.log("create area");
                 _this.createArea(_this.distancePosition);
@@ -612,13 +618,15 @@ GameState.prototype = {
                // _this.createWaterObj(_this.waterdisPosition);
             }
 
-
+            //移除物体扫描 10帧周期
             flashCount++;
             if(flashCount == 10){
                 _this.facetan_text.text = "score:" + Math.floor(player.mesh.position.z);
                 _this.checkAllArray(player.mesh.position);
                 flashCount = 0;
             }
+
+            //跳跃状态判断
             _this.buttonJump.onPointerUpObservable.add(function(){
                 if(player.canjump>0){
                     player.jump = 1;
@@ -638,7 +646,7 @@ GameState.prototype = {
                 document.getElementById("timer").innerText = subTime;
             }*/
 
-            //overroad
+            //越界或到达终点
             if(player.mesh.position.y<-50){
                 gameover();
             }
@@ -646,8 +654,8 @@ GameState.prototype = {
                 gameover();
             }
 
-            player.downPoint = player.mesh.position.clone();
-            player.downPoint.y -= 6;
+            // player.downPoint = player.mesh.position.clone();
+            // player.downPoint.y -= 6;
             
 
             //player.canjump=0;
@@ -697,17 +705,8 @@ GameState.prototype = {
         }
 
         function showScore(score){
-            alert("Game over, your score is "+score);
-
-            //ajax-jq
-            /*$.ajax({
-              type: 'POST',
-              url: url,
-              data: data,
-              success: success,
-              dataType: dataType
-            });*/
-            
+            alert("Game over, your score is "+score);   
         }
+
     }
 };
