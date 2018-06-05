@@ -8,8 +8,6 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
     this.body;
     this.heavy = 2;
 
-
-    /* MESH */
     /*this.mesh = BABYLON.Mesh.CreateBox("playerbox", 8, this.scene);
     this.mesh.position.y = 8;
     this.mesh.scaling.y = 2;*/
@@ -58,6 +56,7 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
             //console.log(_this.body.position);
         });
 
+        //Babylon 3.2版本可用
         //var runske = scene.beginWeightedAnimation(skeleton, 0, 24, 1.0, true);
         //var standske = scene.beginWeightedAnimation(skeleton[0], 25, 26, 0, true);
         //var jumpshe = scene.beginWeightedAnimation(skeleton[0], 27, 28, 0, true);
@@ -67,17 +66,16 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
     //this.mesh2.rotation.y = Math.PI/2;
 
 
-    /*var texture1 = new BABYLON.Texture("img/ball.jpg", scene);
-    //texture.hasAlpha = true;
+    // var texture1 = new BABYLON.Texture("img/ball.jpg", scene);
+    // //texture.hasAlpha = true;
 
-    var mat_nor = new BABYLON.StandardMaterial("mat_nor", scene);
-    mat_nor.diffuseTexture = texture1;
-    mat_nor.backFaceCulling = false;
-    mat_nor.specularPower = 256;
-    mat_nor.diffuseColor = new BABYLON.Color3(50,50,50);
-    
-    //take which mat
-    this.mesh.material = mat_nor;*/
+    // var mat_nor = new BABYLON.StandardMaterial("mat_nor", scene);
+    // mat_nor.diffuseTexture = texture1;
+    // mat_nor.backFaceCulling = false;
+    // mat_nor.specularPower = 256;
+    // mat_nor.diffuseColor = new BABYLON.Color3(50,50,50);
+
+    // this.mesh.material = mat_nor;
 
     //var mat_rfl = new BABYLON.StandardMaterial();
     ////material.refractionTexture = new BABYLON.CubeTexture("textures/TropicalSunnyDay", scene);
@@ -98,7 +96,7 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
     //this.box.position.y = 2;
     //this.body = this.box.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, {mass:1, friction:0.001, restitution:1.5});
     
-    //material
+
     var matos = new BABYLON.StandardMaterial("matos", this.scene);
     //matos.diffuseColor = BABYLON.Color3.Green();
     //this.mesh.material = matos;
@@ -106,18 +104,17 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
     // Movement directions : top, bot, left, right
     this.mvtDirection = [0,0,0,0];
 
-    // The player speed
+    //玩家速度
     this.speed = 5;
-
     this.moveEnergy = 5;
 
-    /* GAMEPAD*/
+
     var _this = this;
     //this.scene.registerBeforeRender(function() {   
     //    _this.update();
     //});
 
-    //state
+    //状态
     this.moveForward = 0; 
     this.moveBackward = 0;
     this.moveRight = 0;
@@ -129,7 +126,7 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
 
     this.canjump = 2;
 
-    /* KEYBOARD */
+
     window.addEventListener("keyup", function(evt) {
         _this.keyUp(evt.keyCode);
     });
@@ -138,13 +135,6 @@ var Player = function(game, scene, gamepad,shadowGenerator) {
         _this.keyDown(evt.keyCode);
     });
 
-    /*window.addEventListener("keyup", function(evt) {
-        _this.handleKeyUp(evt.keyCode);
-    });
-
-    window.addEventListener("keydown", function(evt) {
-        _this.handleKeyDown(evt.keyCode);
-    });*/
 };
 
 Player.DIRECTIONS = {
@@ -225,11 +215,12 @@ Player.prototype = {
 
         var velovity = this.mesh.physicsImpostor.getLinearVelocity().clone();
 
+        //模拟阻力
         velovity.z -= velovity.z*0.1;
         velovity.x -= velovity.x*0.1;
         velovity.y -= 3;
         
-
+        //更新速度
         if(this.direction_z != 0){
             //this.mesh.physicsImpostor.applyImpulse(new BABYLON.Vector3(0, 0, this.direction_z*s), this.mesh.position);
             velovity.z += this.direction_z*10;
@@ -249,6 +240,7 @@ Player.prototype = {
             this.vyCount = 2;
         }
 
+        //返回赋值
         this.mesh.physicsImpostor.setLinearVelocity(velovity);
         
         //0.5+(velovity.x>0? 1:-1)*10;
@@ -275,32 +267,11 @@ Player.prototype = {
         //this.body.body.angularVelocity.scaleEqual(0);
     },
 
-    handleKeyDown : function(keycode) {
-        switch (keycode) {
-            case Player.DIRECTIONS.ZQSD.TOP :
-            case Player.DIRECTIONS.QWSD.TOP :
-                this._chooseDirection(0, 1);
-                break;
-            case Player.DIRECTIONS.ZQSD.BOT :
-            case Player.DIRECTIONS.QWSD.BOT :
-                this._chooseDirection(1, 1);
-                break;
-            case Player.DIRECTIONS.ZQSD.LEFT:
-            case Player.DIRECTIONS.QWSD.LEFT :
-                this._chooseDirection(2, 1);
-                break;
-            case Player.DIRECTIONS.ZQSD.RIGHT:
-            case Player.DIRECTIONS.QWSD.RIGHT :
-                this._chooseDirection(3, 1);
-                break;
-        }
-    },
-
     keyDown : function(keycode){
         switch (keycode) {
         case 87://W
             this.moveForward = 1;
-            console.log("W");
+            //console.log("W");
             break;
         case 83://S
             this.moveBackward = 1;
@@ -349,28 +320,6 @@ Player.prototype = {
         case 32://space
             this.jump = 0;
             break;
-        }
-    },
-
-    handleKeyUp : function(keycode) {
-
-        switch (keycode) {
-            case Player.DIRECTIONS.ZQSD.TOP :
-            case Player.DIRECTIONS.QWSD.TOP :
-                this._chooseDirection(0,0);
-                break;
-            case Player.DIRECTIONS.ZQSD.BOT :
-            case Player.DIRECTIONS.QWSD.BOT :
-                this._chooseDirection(1, 0);
-                break;
-            case Player.DIRECTIONS.ZQSD.LEFT:
-            case Player.DIRECTIONS.QWSD.LEFT :
-                this._chooseDirection(2, 0);
-                break;
-            case Player.DIRECTIONS.ZQSD.RIGHT:
-            case Player.DIRECTIONS.QWSD.RIGHT :
-                this._chooseDirection(3, 0);
-                break;
         }
     },
 
